@@ -1,4 +1,5 @@
 import styles from './styles.module.scss'
+import SignInButton from '@/components/SignInButton'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -19,9 +20,7 @@ function Header() {
 					<Link href="/">Home</Link>
 					<Link href="/board">Minhas Tarefas</Link>
         </nav>
-				<button>
-					Entrar com Github
-				</button>
+				<SignInButton />
       </div>
     </header>
   )

@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Image from "next/image";
 import styles from "../styles/styles.module.scss";
 
 export default function Home() {
@@ -7,10 +8,32 @@ export default function Home() {
       <Head>
         <title>Tarefator App</title>
       </Head>
-			<main>
-				<div className={styles.container}>
-					<h1>OI sou o Tarefator</h1>
+
+			<main className={ styles.contentContainer }>
+
+				<Image
+				src="/images/board-user.svg"
+				alt="ferramenta board"
+				width="500"
+				height="500"
+				/>
+
+				<section className={ styles.callToAction }>
+					<h1>Uma ferramenta para o seu dia a dia, escreva, planeje e organize-se</h1>
+					<p><span>100% Gratuita</span> e online.</p>
+				</section>
+
+				<div className={ styles.donaters }>
+
+					<Image 
+					src="/images/avatar.jpg"
+					alt="user vip"
+					width="80"
+					height="80"
+					/>
+					
 				</div>
+
 			</main>
 		</>
 	);
