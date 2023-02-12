@@ -1,6 +1,5 @@
-import firebase from 'firebase/app'
 import { initializeApp } from "firebase/app";
-import { collection, addDoc, getFirestore } from 'firebase/firestore'
+import { collection, addDoc, getFirestore, getDocs } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: "AIzaSyBUztyt0sEGDeSHK08zoGrD5Cc6cQ3zje0",
@@ -12,14 +11,24 @@ const firebaseConfig = {
   measurementId: "G-70D5PRJ6F7"
 };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app)
-  
-  export const add = async (path: string, data: Object) => {
-    try {
-      return await addDoc(collection(db, path), data);
-    } catch (e) {
-      console.log('error adding document',  e); 
-    }
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app)
+
+export const add = async (path: string, data: Object) => {
+  try {
+    return await addDoc(collection(db, path), data);
+  } catch (e) {
+    console.log('error adding document', e);
   }
+}
+
+export const getTasks = async () => {
+  const tasksCol = collection(db, 'tasks');
+  const tasksSnapshot = await getDocs(tasksCol);
+  // console.log(tasksSnapshot);
+  
+  const taskList = tasksSnapshot.docs.map((doc) => doc.data())
+  return taskList
+  
+ }
