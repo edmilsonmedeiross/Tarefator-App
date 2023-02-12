@@ -4,21 +4,21 @@ import { getSession } from "next-auth/react";
 import { FiPlus, FiCalendar, FiEdit2, FiTrash, FiClock } from "react-icons/fi";
 import SuportButton from "@/components/SuportButton";
 import { useState, FormEvent } from "react";
-import { add, getTasks } from "@/services/firebaseConnections";
+import { add, getTasks, deleteTask } from "@/services/firebaseConnections";
 import { format } from "date-fns";
 import Link from "next/link";
 
 type TaskList = {
   created: string | Date;
   formatedDate?: string;
-  task: string;
+  task: string | undefined;
   name: string;
-  id: string;
+  id: string | undefined;
 }
 
 interface TarefatorProps {
 	user: {
-		id: string;
+		id: string | undefined;
 		name: string;
 	};
 
@@ -45,7 +45,7 @@ function Board({ user, dataFormated }: TarefatorProps) {
 		}).then((doc) => {
 			console.log("sucess");
 			let data = {
-				id: doc?.id,
+        id: doc?.id,
 				created: new Date(),
 				formatedDate: format(new Date(), "dd MMMM yyyy"),
 				task: input,
@@ -55,6 +55,12 @@ function Board({ user, dataFormated }: TarefatorProps) {
 			setInput("");
 		});
 	};
+
+  const handleDelete = (id:string) => deleteTask(id).then(() => {
+    const taskDeleted = taskList.filter(task => task.id !== id)
+    setTaskList(taskDeleted)
+  });
+  
 
 	return (
 		<>
@@ -74,7 +80,11 @@ function Board({ user, dataFormated }: TarefatorProps) {
 					</button>
 				</form>
 
-				<h1>Você tem 2 tarefas</h1>
+				{ 
+          taskList.length ?
+            <h1>Você tem {taskList.length} {taskList.length === 1 ? 'tarefa!' : 'tarefas!'}</h1> :
+            <h1>Digite uma tarefa!</h1>
+        }
 
 				<section>
 					{taskList.map((task, index) => (
@@ -101,7 +111,7 @@ function Board({ user, dataFormated }: TarefatorProps) {
 									</button>
 								</div>
 
-								<button>
+								<button  onClick={() =>{ handleDelete(task.id) }}>
 									<FiTrash
 										size={20}
 										color='#ff3636'
@@ -143,11 +153,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	}
 
   const data = await getTasks()
+   console.log(data);
+  
  
   const dataFormated = JSON.stringify(data.map(u => {
+
     return {
-      formatedDate: format(u.created_at.toDate(), 'dd MMMM yyyy'),
       ...u,
+      formatedDate: format(u.created_at.toDate(), 'dd MMMM yyyy'),
     }
   }).filter(a => a.name === session.user?.name).sort((a,b) => a.created_at - b.created_at)) 
 

@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { collection, addDoc, getFirestore, getDocs } from 'firebase/firestore'
+import { collection, addDoc, getFirestore, getDocs, doc, deleteDoc } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: "AIzaSyBUztyt0sEGDeSHK08zoGrD5Cc6cQ3zje0",
@@ -23,12 +23,17 @@ export const add = async (path: string, data: Object) => {
   }
 }
 
-export const getTasks = async () => {
-  const tasksCol = collection(db, 'tasks');
-  const tasksSnapshot = await getDocs(tasksCol);
-  // console.log(tasksSnapshot);
-  
-  const taskList = tasksSnapshot.docs.map((doc) => doc.data())
-  return taskList
-  
+export const getTasks = async () => {  
+  const querySnapshot = await getDocs(collection(db, "tasks"));
+  const taskList = querySnapshot.docs.map((doc) => ({
+     ...doc.data(),
+     id: doc.id,
+     })
+ );
+ return taskList;
  }
+
+ export const deleteTask = async (value: string) => {
+  await deleteDoc(doc(db, "tasks", value));
+ }
+
