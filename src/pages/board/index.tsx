@@ -1,10 +1,10 @@
 import styles from "./styles.module.scss";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
-import { FiPlus, FiCalendar, FiEdit2, FiTrash, FiClock } from "react-icons/fi";
+import { FiPlus, FiCalendar, FiEdit2, FiTrash, FiClock, FiX } from "react-icons/fi";
 import SuportButton from "@/components/SuportButton";
 import { useState, FormEvent } from "react";
-import { add, getTasks, deleteTask } from "@/services/firebaseConnections";
+import { add, getTasks, deleteTask, refreshTask } from "@/services/firebaseConnections";
 import { format } from "date-fns";
 import Link from "next/link";
 
@@ -30,6 +30,8 @@ function Board({ user, dataFormated }: TarefatorProps) {
 	const [input, setInput] = useState("");
 	const [taskList, setTaskList] = useState<TaskList[]>(JSON.parse(dataFormated));
 
+  const [taskEdit, setTaskEdit] = useState<TaskList | null>(null)
+
 	const handleAddTask = async (e: FormEvent) => {
 		e.preventDefault();
 
@@ -37,6 +39,20 @@ function Board({ user, dataFormated }: TarefatorProps) {
 			alert("Digite uma Tarefa!");
 			return;
 		}
+
+    if (taskEdit) {
+      refreshTask(taskEdit.id, input).then(() => {
+        let data = taskList
+        const taskIndex = taskList.findIndex(iten => iten.id === taskEdit.id);
+        data[taskIndex].task = input;
+        
+        setTaskList(data)
+        setTaskEdit(null)
+        setInput('')
+      })
+
+      return;
+    }
 
 		await add("tasks", {
 			created_at: new Date(),
@@ -60,11 +76,28 @@ function Board({ user, dataFormated }: TarefatorProps) {
     const taskDeleted = taskList.filter(task => task.id !== id)
     setTaskList(taskDeleted)
   });
+
+  const handleEditTask = (task: TaskList) => {
+    setTaskEdit(task)
+    setInput(task.task)
+  }
   
+  const handleCancelEdit = () => {
+    setInput('')
+    setTaskEdit(null)
+  }
 
 	return (
 		<>
 			<main className={styles.container}>
+        {taskEdit && (
+          <span className={ styles.warnText }>
+            <button onClick={ handleCancelEdit }>
+              <FiX size={25} color="red"/>
+            </button>
+            Você está editando uma tarefa...
+          </span>
+        )}
 				<form onSubmit={handleAddTask}>
 					<input
 						type='text'
@@ -102,7 +135,7 @@ function Board({ user, dataFormated }: TarefatorProps) {
 										<time>{task.formatedDate}</time>
 									</div>
 
-									<button>
+									<button onClick={() => handleEditTask(task)} >
 										<FiEdit2
 											size={20}
 											color='#fff'

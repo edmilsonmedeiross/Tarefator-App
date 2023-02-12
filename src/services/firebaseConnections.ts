@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { collection, addDoc, getFirestore, getDocs, doc, deleteDoc } from 'firebase/firestore'
+import { collection, addDoc, getFirestore, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: "AIzaSyBUztyt0sEGDeSHK08zoGrD5Cc6cQ3zje0",
@@ -35,5 +35,12 @@ export const getTasks = async () => {
 
  export const deleteTask = async (value: string) => {
   await deleteDoc(doc(db, "tasks", value));
+ }
+
+ export const refreshTask = async(value: string, text: string) => {
+  const washingtonRef = doc(db, "tasks", value);
+  await updateDoc(washingtonRef, {
+    task: text
+  });
  }
 
