@@ -1,7 +1,9 @@
-import { GetServerSideProps } from "next"
-import { getSession } from "next-auth/react"
-import { getDocTask } from "@/services/firebaseConnections"
+import { GetServerSideProps } from "next";
+import { getSession } from "next-auth/react";
+import { getDocTask } from "@/services/firebaseConnections";
 import { format } from "date-fns";
+import styles from './task.module.scss';
+import { FiCalendar } from 'react-icons/fi'
 
 type Task = {
   id: string;
@@ -19,8 +21,16 @@ function Task({ data }: TaskListProps) {
   const task = JSON.parse(data) as Task;
   return (
     <>
-      <div>Task</div>
-      <h2>{task.task}</h2>
+      <article className={ styles.container }>
+        <div className={ styles.actions }>
+          <div>
+            <FiCalendar size={30} color="#fff" />
+            <span>Tarefa criada:</span>
+            <time>{ task.createdFormat }</time>
+          </div>
+        </div>
+        <p>{ task.task }</p>
+      </article>
     </>
   )
 }
