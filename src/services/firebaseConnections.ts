@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { collection, addDoc, getFirestore, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore'
+import { collection, addDoc, getFirestore, getDocs, doc, deleteDoc, updateDoc, getDoc } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: "AIzaSyBUztyt0sEGDeSHK08zoGrD5Cc6cQ3zje0",
@@ -42,5 +42,16 @@ export const getTasks = async () => {
   await updateDoc(washingtonRef, {
     task: text
   });
- }
+}
 
+export const getDocTask = async(idTask: string) => {
+  const docRef = doc(db, "tasks", idTask);
+  const docSnap = await getDoc(docRef);
+  
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    // doc.data() will be undefined in this case
+    console.log("No such document!");
+  }
+}

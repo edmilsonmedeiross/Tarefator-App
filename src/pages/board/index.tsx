@@ -45,7 +45,7 @@ function Board({ user, dataFormated }: TarefatorProps) {
         let data = taskList
         const taskIndex = taskList.findIndex(iten => iten.id === taskEdit.id);
         data[taskIndex].task = input;
-        
+
         setTaskList(data)
         setTaskEdit(null)
         setInput('')
@@ -186,9 +186,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	}
 
   const data = await getTasks()
-   console.log(data);
-  
- 
   const dataFormated = JSON.stringify(data.map(u => {
 
     return {
