@@ -11,18 +11,25 @@ import Link from "next/link";
 type TaskList = {
   created: string | Date;
   formatedDate?: string;
-  task: string | undefined;
+  task: string;
   name: string;
-  id: string | undefined;
+  id: string;
+	created_at: string;
+	user_id: string;
 }
 
 interface TarefatorProps {
 	user: {
-		id: string | undefined;
-		name: string;
+	created: string | Date;
+  formatedDate?: string;
+  task: string;
+  name: string;
+  id: string;
+	created_at: string;
+	user_id: string;
 	};
 
-  dataFormated: string
+  dataFormated: string;
 }
 
 
@@ -58,6 +65,7 @@ function Board({ user, dataFormated }: TarefatorProps) {
 			created_at: new Date(),
 			task: input,
 			name: user.name,
+			user_id: user.id
 		}).then((doc) => {
 			console.log("sucess");
 			let data = {
@@ -174,7 +182,7 @@ function Board({ user, dataFormated }: TarefatorProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const session = await getSession({ req });
+	const session: any = await getSession({ req });
 
 	if (!session) {
 		return {
@@ -186,18 +194,18 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	}
 
   const data = await getTasks()
+	
   const dataFormated = JSON.stringify(data.map(u => {
-
     return {
       ...u,
       formatedDate: format(u.created_at.toDate(), 'dd MMMM yyyy'),
     }
-  }).filter(a => a.name === session.user?.name).sort((a,b) => a.created_at - b.created_at)) 
+  }).filter(a => a.user_id === session?.id).sort((a: any,b: any) => a.created_at - b.created_at)) 
 
 
 	const user = {
 		name: session.user?.name,
-		id: session.user?.image,
+		id: session?.id,
 	};
 
 	return {

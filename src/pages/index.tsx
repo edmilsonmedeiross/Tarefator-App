@@ -2,8 +2,25 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/styles.module.scss";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/services/firebaseConnections";
+import { useState } from "react";
 
-export default function Home() {
+type VipUsers = {
+	id: string;
+	donate: boolean,
+	lastDonate: Date,
+	image: string
+	name: string,
+}
+
+interface HomeProps {
+	vipUsers: string;
+}
+
+export default function Home({ vipUsers }: HomeProps) {
+	const [vips, setVips] = useState<VipUsers>(JSON.parse(vipUsers))
+
 	return (
 		<>
       <Head>
@@ -15,8 +32,8 @@ export default function Home() {
 				<Image
 				src="/images/board-user.svg"
 				alt="ferramenta board"
-				width="500"
-				height="500"
+				width="400"
+				height="400"
 				/>
 
 				<section className={ styles.callToAction }>
@@ -24,14 +41,24 @@ export default function Home() {
 					<p><span>100% Gratuita</span> e online.</p>
 				</section>
 
+					{(
+						vips.length > 0 &&
+						 <h3>Apoiadores:</h3>
+					)}
+
 				<div className={ styles.donaters }>
 
-					<Image 
-					src="/images/avatar.jpg"
-					alt="user vip"
-					width="80"
-					height="80"
-					/>
+
+					{vips.map(user => (
+						<img key={user.id} src={user.image} alt="vip user" />
+						// <Image
+						// src={user.image}
+						// key={user.id}
+						// alt="vip user"
+						// width={50}
+						// height={50}
+						// />
+					))}
 					
 				</div>
 
@@ -42,10 +69,22 @@ export default function Home() {
 
 export const getStaticProps: GetStaticProps = async () => {
 
+	const querySnapshot = await getDocs(collection(db, "users"));
+  const vipUsers = JSON.stringify(querySnapshot.docs.map(doc => {
+		return {
+     ...doc.data(),
+		 id: doc.id,
+		}
+	}))
+	
 	return {
 		props: {
-
+			vipUsers,
 		},
 		revalidate: 60 * 60 
 	}
 }
+
+
+// import { collection, getDocs } from "firebase/firestore";
+

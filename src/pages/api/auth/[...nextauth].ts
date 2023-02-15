@@ -14,12 +14,12 @@ export const authOptions = {
   ],
 
   callbacks: {
-    session: async ({session, user}) => {   
+    session: async ({session, token}: any) => {   
 
       try {
         return {
           ...session,
-          id: user.id
+          id: token.sub,
         }
       } catch {
         return {
@@ -28,7 +28,7 @@ export const authOptions = {
         }
       }
     },
-    async signIn({ user }) {
+    async signIn({ user }: any) {
       const { email } = user;
       //console.log(email);
       
