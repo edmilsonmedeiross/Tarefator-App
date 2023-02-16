@@ -38,10 +38,10 @@ function Task({ data }: TaskListProps) {
 export default Task
 
 export const getServerSideProps: GetServerSideProps = async ({req, params}) => {
-  const { id } = params
-  const session = await getSession({req})
+  const { id }:any = params
+  const session: any = await getSession({req})
 
-  if (!session) {
+  if (!session?.vip) {
     return {
       redirect: {
         destination: '/board',
@@ -61,7 +61,20 @@ export const getServerSideProps: GetServerSideProps = async ({req, params}) => {
     }
     return JSON.stringify(data);
   })
+  
+  .catch(() => {
+    return {};
+  })
  
+  if (Object.keys(data).length === 0) {
+    return {
+      redirect: {
+        destination: '/board',
+        permanent: false,
+      }
+    }
+  }
+
   return {
     props: {
       data,

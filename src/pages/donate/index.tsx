@@ -99,9 +99,7 @@ export default Donate
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const session = await getSession({ req })
-  console.log(session.id);
   
-
   if(!session) {
     return {
       redirect: {

@@ -3,9 +3,10 @@ import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import { FiPlus, FiCalendar, FiEdit2, FiTrash, FiClock, FiX } from "react-icons/fi";
 import SuportButton from "@/components/SuportButton";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, use } from "react";
 import { add, getTasks, deleteTask, refreshTask } from "@/services/firebaseConnections";
-import { format } from "date-fns";
+import { format, formatDistance } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import Link from "next/link";
 
 type TaskList = {
@@ -27,6 +28,8 @@ interface TarefatorProps {
   id: string;
 	created_at: string;
 	user_id: string;
+	vip: boolean;
+	lastDonate: string | Date;
 	};
 
   dataFormated: string;
@@ -143,13 +146,16 @@ function Board({ user, dataFormated }: TarefatorProps) {
 										<time>{task.formatedDate}</time>
 									</div>
 
+								{user.vip && (
 									<button onClick={() => handleEditTask(task)} >
 										<FiEdit2
 											size={20}
 											color='#fff'
 										/>
 										<span>Editar</span>
-									</button>
+								  </button>
+								)}
+									
 								</div>
 
 								<button  onClick={() =>{ handleDelete(task.id) }}>
@@ -165,6 +171,7 @@ function Board({ user, dataFormated }: TarefatorProps) {
 				</section>
 			</main>
 
+			{user.vip && (
 			<div className={styles.vipContainer}>
 				<h3>Obrigado por apoiar esse projeto.</h3>
 				<div>
@@ -172,9 +179,10 @@ function Board({ user, dataFormated }: TarefatorProps) {
 						size={28}
 						color='#fff'
 					/>
-					<time>Última doação foi à 3 dias.</time>
+					<time>Última doação foi {formatDistance(new Date(user.lastDonate), new Date(), { locale: ptBR })}</time>
 				</div>
 			</div>
+			)}
 
 			<SuportButton />
 		</>
@@ -202,10 +210,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     }
   }).filter(a => a.user_id === session?.id).sort((a: any,b: any) => a.created_at - b.created_at)) 
 
-
 	const user = {
 		name: session.user?.name,
 		id: session?.id,
+		vip: session?.vip,
+		lastDonate: session?.lastDonate,
 	};
 
 	return {
