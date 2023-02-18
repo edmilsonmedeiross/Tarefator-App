@@ -51,7 +51,6 @@ export const authOptions = {
     },
     async signIn({ user }: any) {
       const { email } = user;
-      //console.log(email);
       
       try {
         return true;
