@@ -29,11 +29,7 @@ export const authOptions = {
           }
 
         }))
-  
 
-        console.log(docSnap);
-        
-        
         return {
           ...session,
           id: token.sub,
@@ -59,7 +55,9 @@ export const authOptions = {
         return false;
       }
     }
-  }
+  },
+
+  secret: GITHUB_CLIENT_SECRET,
 }
 
 export default NextAuth(authOptions)
