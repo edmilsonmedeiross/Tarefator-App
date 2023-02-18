@@ -19,9 +19,6 @@ interface DonateProps {
 function Donate({ user }: DonateProps) {
   const [vip, setVip] = useState(false);
 
-  //CLIENT_ID=AQO-JoluFpasmX71Sp1Me6AdwuZwGjQamM7Jit84upF2nvffpDIn7XFrRO5fCRf-iz8zov0wFbXV0PEF
- // <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID"></script>
-
   const myLoader = () => `${user.image}`
 
   const handleSaveDonate = async () => {
@@ -98,7 +95,7 @@ function Donate({ user }: DonateProps) {
 export default Donate
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const session = await getSession({ req })
+  const session: any = await getSession({ req })
   
   if(!session) {
     return {

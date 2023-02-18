@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import { FiPlus, FiCalendar, FiEdit2, FiTrash, FiClock, FiX } from "react-icons/fi";
 import SuportButton from "@/components/SuportButton";
-import { useState, FormEvent, use } from "react";
+import { useState, FormEvent } from "react";
 import { add, getTasks, deleteTask, refreshTask } from "@/services/firebaseConnections";
 import { format, formatDistance } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -11,22 +11,22 @@ import Link from "next/link";
 
 type TaskList = {
   created: string | Date;
-  formatedDate?: string;
+  formatedDate?: string | any;
   task: string;
   name: string;
   id: string;
-	created_at: string;
+	created_at: string | Date;
 	user_id: string;
 }
 
 interface TarefatorProps {
 	user: {
 	created: string | Date;
-  formatedDate?: string;
+  formatedDate?: string | any;
   task: string;
   name: string;
   id: string;
-	created_at: string;
+	created_at: string | Date | null;
 	user_id: string;
 	vip: boolean;
 	lastDonate: string | Date;
@@ -78,7 +78,7 @@ function Board({ user, dataFormated }: TarefatorProps) {
 				task: input,
 				name: user.name,
 			};
-			setTaskList([...taskList, data]);
+			setTaskList([...taskList, data] as any);
 			setInput("");
 		});
 	};
@@ -201,16 +201,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		};
 	}
 
-  const data = await getTasks()
+  const data: any = await getTasks()
 	
-  const dataFormated = JSON.stringify(data.map(u => {
+  const dataFormated: string = JSON.stringify(data.map((u: any)  => {
     return {
       ...u,
       formatedDate: format(u.created_at.toDate(), 'dd MMMM yyyy'),
     }
-  }).filter(a => a.user_id === session?.id).sort((a: any,b: any) => a.created_at - b.created_at)) 
+  }).filter((a: any) => a.user_id === session?.id).sort((a: any,b: any) => a.created_at - b.created_at));
 
-	const user = {
+	const user: any = {
 		name: session.user?.name,
 		id: session?.id,
 		vip: session?.vip,

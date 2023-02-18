@@ -25,7 +25,7 @@ export const add = async (path: string, data: Object) => {
 
 export const getTasks = async () => {  
   const querySnapshot = await getDocs(collection(db, "tasks"));
-  const taskList = querySnapshot.docs.map((doc) => ({
+  const taskList: any = querySnapshot.docs.map((doc) => ({
      ...doc.data(),
      id: doc.id,
      })

@@ -19,7 +19,7 @@ interface HomeProps {
 }
 
 export default function Home({ vipUsers }: HomeProps) {
-	const [vips, setVips] = useState<VipUsers>(JSON.parse(vipUsers))
+	const [vips, setVips] = useState<VipUsers[]>(JSON.parse(vipUsers))
 
 	return (
 		<>
