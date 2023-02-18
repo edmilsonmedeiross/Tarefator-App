@@ -87,7 +87,6 @@ function Donate({ user }: DonateProps) {
       />
 
     </main>
-    Donate
     </>
   )
 }
